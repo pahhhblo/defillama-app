@@ -1,102 +1,102 @@
 import { useRouter } from 'next/router'
-import { STABLECOINS_SETTINGS } from '~/contexts/LocalStorage'
+import { STABLECOINS_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { useMemo } from 'react'
 import { Select } from '~/components/Select'
 
 export const stablecoinPegTypeOptions = [
 	{
 		name: 'USD',
-		key: STABLECOINS_SETTINGS.PEGGEDUSD,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDUSD,
 		filterFn: (item) => item.pegType === 'peggedUSD',
 		help: 'Show stablecoins pegged to USD'
 	},
 	{
 		name: 'EUR',
-		key: STABLECOINS_SETTINGS.PEGGEDEUR,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDEUR,
 		filterFn: (item) => item.pegType === 'peggedEUR',
 		help: 'Show stablecoins pegged to EUR'
 	},
 	{
 		name: 'SGD',
-		key: STABLECOINS_SETTINGS.PEGGEDSGD,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDSGD,
 		filterFn: (item) => item.pegType === 'peggedSGD',
 		help: 'Show stablecoins pegged to SGD'
 	},
 	{
 		name: 'JPY',
-		key: STABLECOINS_SETTINGS.PEGGEDJPY,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDJPY,
 		filterFn: (item) => item.pegType === 'peggedJPY',
 		help: 'Show stablecoins pegged to JPY'
 	},
 	{
 		name: 'CNY',
-		key: STABLECOINS_SETTINGS.PEGGEDCNY,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDCNY,
 		filterFn: (item) => item.pegType === 'peggedCNY',
 		help: 'Show stablecoins pegged to CNY'
 	},
 	{
 		name: 'UAH',
-		key: STABLECOINS_SETTINGS.PEGGEDUAH,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDUAH,
 		filterFn: (item) => item.pegType === 'peggedUAH',
 		help: 'Show stablecoins pegged to UAH'
 	},
 	{
 		name: 'ARS',
-		key: STABLECOINS_SETTINGS.PEGGEDARS,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDARS,
 		filterFn: (item) => item.pegType === 'peggedARS',
 		help: 'Show stablecoins pegged to ARS'
 	},
 	{
 		name: 'GBP',
-		key: STABLECOINS_SETTINGS.PEGGEDGBP,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDGBP,
 		filterFn: (item) => item.pegType === 'peggedGBP',
 		help: 'Show stablecoins pegged to GBP'
 	},
 	{
 		name: 'Variable',
-		key: STABLECOINS_SETTINGS.PEGGEDVAR,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDVAR,
 		filterFn: (item) => item.pegType === 'peggedVAR',
 		help: 'Show stablecoins with a variable or floating peg'
 	},
 	{
 		name: 'CAD',
-		key: STABLECOINS_SETTINGS.PEGGEDCAD,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDCAD,
 		filterFn: (item) => item.pegType === 'peggedCAD',
 		help: 'Show stablecoins pegged to CAD'
 	},
 	{
 		name: 'AUD',
-		key: STABLECOINS_SETTINGS.PEGGEDAUD,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDAUD,
 		filterFn: (item) => item.pegType === 'peggedAUD',
 		help: 'Show stablecoins pegged to AUD'
 	},
 	{
 		name: 'TRY',
-		key: STABLECOINS_SETTINGS.PEGGEDTRY,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDTRY,
 		filterFn: (item) => item.pegType === 'peggedTRY',
 		help: 'Show stablecoins pegged to Turkish Lira'
 	},
 	{
 		name: 'CHF',
-		key: STABLECOINS_SETTINGS.PEGGEDCHF,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDCHF,
 		filterFn: (item) => item.pegType === 'peggedCHF',
 		help: 'Show stablecoins pegged to Swiss Franc'
 	},
 	{
 		name: 'COP',
-		key: STABLECOINS_SETTINGS.PEGGEDCOP,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDCOP,
 		filterFn: (item) => item.pegType === 'peggedCOP',
 		help: 'Show stablecoins pegged to Colombian Peso'
 	},
 	{
 		name: 'REAL',
-		key: STABLECOINS_SETTINGS.PEGGEDREAL,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDREAL,
 		filterFn: (item) => item.pegType === 'peggedREAL',
 		help: 'Show stablecoins pegged to Brazilian Real'
 	},
 	{
 		name: 'RUB',
-		key: STABLECOINS_SETTINGS.PEGGEDRUB,
+		key: STABLECOINS_SETTINGS_LOOKUP.PEGGEDRUB,
 		filterFn: (item) => item.pegType === 'peggedRUB',
 		help: 'Show stablecoins pegged to Russian Ruble'
 	}

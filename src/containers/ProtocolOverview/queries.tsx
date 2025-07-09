@@ -29,7 +29,7 @@ import {
 } from './types'
 import { getAdapterChainOverview, getAdapterProtocolSummary, IAdapterOverview } from '../DimensionAdapters/queries'
 import { cg_volume_cexs } from '~/pages/cexs'
-import { DEFI_SETTINGS_KEYS } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS, DEFI_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { chainCoingeckoIdsForGasNotMcap } from '~/constants/chainTokens'
 import metadata from '~/utils/metadata'
 import { allColors, ProtocolChartsLabels } from './Chart/constants'
@@ -100,7 +100,7 @@ export const getProtocolMetrics = ({
 
 	let chainsWithTvl = 0
 	for (const chain in protocolData.chainTvls ?? {}) {
-		if (chain.includes('-') || chain === 'offers' || DEFI_SETTINGS_KEYS.includes(chain)) {
+		if (chain.includes('-') || chain === 'offers' || DEFI_SETTINGS_LOOKUP[chain]) {
 			continue
 		}
 		if (protocolData.chainTvls[chain].tvl?.length > 0) {
@@ -265,7 +265,7 @@ export const getProtocolOverviewPageData = async ({
 							monthlyDevelopers: devActivity?.report?.monthly_contributers.slice(-1)[0]?.v ?? null,
 							lastCommit: devActivity?.last_commit_update_time ?? null,
 							updatedAt: devActivity?.last_report_generated_time ?? null
-					  }
+						}
 					: null
 
 				return { ...data, devMetrics, tokenCGData: tokenCGData ? getTokenCGData(tokenCGData) : null }
@@ -280,7 +280,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.revenue
 			? getAdapterChainOverview({
@@ -289,7 +289,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.holdersRevenue
 			? getAdapterChainOverview({
@@ -298,7 +298,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.bribeRevenue
 			? getAdapterChainOverview({
@@ -307,7 +307,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.tokenTax
 			? getAdapterChainOverview({
@@ -316,7 +316,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.dexs
 			? getAdapterChainOverview({
@@ -324,7 +324,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.aggregator
 			? getAdapterChainOverview({
@@ -332,7 +332,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.perps
 			? getAdapterChainOverview({
@@ -340,7 +340,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.perpsAggregators
 			? getAdapterChainOverview({
@@ -348,7 +348,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.bridgeAggregators
 			? getAdapterChainOverview({
@@ -356,7 +356,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.options
 			? getAdapterChainOverview({
@@ -365,7 +365,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.options
 			? getAdapterChainOverview({
@@ -374,7 +374,7 @@ export const getProtocolOverviewPageData = async ({
 					chain: 'All',
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.treasury
 			? fetchWithErrorLogging(PROTOCOLS_TREASURY)
@@ -388,7 +388,7 @@ export const getProtocolOverviewPageData = async ({
 									ownTokens: res.ownTokens ?? null,
 									others: res.others ?? null,
 									total: Object.values(res).reduce((acc: number, curr: number | null) => acc + +(curr ?? 0), 0) ?? null
-							  }
+								}
 							: null
 					})
 					.catch(() => null)
@@ -438,7 +438,7 @@ export const getProtocolOverviewPageData = async ({
 									newUsers: data.newUsers?.value ?? null,
 									transactions: data.txs?.value ?? null,
 									gasUsd: data.gasUsd?.value ?? null
-							  }
+								}
 							: null
 					})
 					.catch(() => null)
@@ -595,11 +595,11 @@ export const getProtocolOverviewPageData = async ({
 			? {
 					noOfPoolsTracked: projectYields.length,
 					averageAPY: projectYields.reduce((acc, { apy }) => acc + apy, 0) / projectYields.length
-			  }
+				}
 			: null
 
 	const tokenPools =
-		yieldsData?.data && yieldsConfig ? liquidityInfo?.find((p) => p.id === protocolData.id)?.tokenPools ?? [] : []
+		yieldsData?.data && yieldsConfig ? (liquidityInfo?.find((p) => p.id === protocolData.id)?.tokenPools ?? []) : []
 
 	const liquidityAggregated = tokenPools.reduce((agg, pool) => {
 		if (!agg[pool.project]) agg[pool.project] = {}
@@ -693,12 +693,12 @@ export const getProtocolOverviewPageData = async ({
 			: null) ?? null
 
 	const tvlChart = {}
-	const extraTvlCharts = Object.fromEntries(DEFI_SETTINGS_KEYS.map((key) => [key, {}]))
+	const extraTvlCharts = Object.fromEntries(DEFI_SETTINGS.map((key) => [key, {}]))
 	if (metadata.tvl) {
 		for (const chain in protocolData.chainTvls ?? {}) {
 			if (!protocolData.chainTvls[chain].tvl?.length) continue
 			if (chain.includes('-') || chain === 'offers') continue
-			if (DEFI_SETTINGS_KEYS.includes(chain)) {
+			if (DEFI_SETTINGS_LOOKUP[chain]) {
 				for (const item of protocolData.chainTvls[chain].tvl) {
 					extraTvlCharts[chain][item.date] = (extraTvlCharts[chain][item.date] ?? 0) + item.totalLiquidityUSD
 				}
@@ -731,7 +731,7 @@ export const getProtocolOverviewPageData = async ({
 	const chains = []
 	for (const chain in protocolData.currentChainTvls ?? {}) {
 		if (chain.includes('-') || chain === 'offers') continue
-		if (DEFI_SETTINGS_KEYS.includes(chain)) continue
+		if (DEFI_SETTINGS_LOOKUP[chain]) continue
 		if (protocolData.currentChainTvls[chain] != null) {
 			chains.push([chain, protocolData.currentChainTvls[chain]])
 		}
@@ -896,7 +896,7 @@ export const getProtocolOverviewPageData = async ({
 		otherProtocols: protocolData.otherProtocols ?? null,
 		deprecated: protocolData.deprecated ?? false,
 		chains: protocolData.chains ?? [],
-		currentTvlByChain: metadata.tvl ? protocolData.currentChainTvls ?? {} : {},
+		currentTvlByChain: metadata.tvl ? (protocolData.currentChainTvls ?? {}) : {},
 		description: protocolData.description ?? '',
 		website: protocolData.referralUrl ?? protocolData.url ?? null,
 		twitter: protocolData.twitter ?? null,
@@ -954,7 +954,7 @@ export const getProtocolOverviewPageData = async ({
 					sources: expenses.sources ?? null,
 					notes: expenses.notes ?? null,
 					lastUpdate: expenses.lastUpdate ?? null
-			  }
+				}
 			: null,
 		tokenLiquidity:
 			tokenLiquidity?.length > 0
@@ -967,7 +967,7 @@ export const getProtocolOverviewPageData = async ({
 						total: +protocolData.audits,
 						auditLinks: protocolData.audit_links ?? [],
 						note: protocolData.audit_note ?? null
-				  }
+					}
 				: null,
 		isCEX: false,
 		hasKeyMetrics,
@@ -1049,9 +1049,11 @@ function formatAdapterData({
 			...(areMethodologiesDifferent
 				? { childMethodologies: childMethodologies.filter((m) => (m[1] || m[2] ? true : false)) }
 				: {
-						methodology: methodologyKey ? topChildMethodology?.[1] ?? commonMethodology[methodologyKey] ?? null : null,
+						methodology: methodologyKey
+							? (topChildMethodology?.[1] ?? commonMethodology[methodologyKey] ?? null)
+							: null,
 						methodologyURL: topChildMethodology?.[2] ?? null
-				  })
+					})
 		}
 	}
 
@@ -1066,7 +1068,7 @@ function formatAdapterData({
 		total30d: adapterProtocol.total30d ?? null,
 		totalAllTime: adapterProtocol.totalAllTime ?? null,
 		methodology: methodologyKey
-			? adapterProtocol.methodology?.[methodologyKey] ?? commonMethodology[methodologyKey] ?? null
+			? (adapterProtocol.methodology?.[methodologyKey] ?? commonMethodology[methodologyKey] ?? null)
 			: null,
 		methodologyURL: adapterProtocol.methodologyURL ?? null
 	}
@@ -1127,7 +1129,7 @@ export function getTokenCGData(tokenCGData: any) {
 					(acc, curr) =>
 						(acc +=
 							curr['trust_score'] !== 'red' && cg_volume_cexs.includes(curr.market.identifier)
-								? curr.converted_volume.usd ?? 0
+								? (curr.converted_volume.usd ?? 0)
 								: 0),
 					0
 				) ?? null,
@@ -1137,7 +1139,7 @@ export function getTokenCGData(tokenCGData: any) {
 						(acc +=
 							curr['trust_score'] === 'red' || cg_volume_cexs.includes(curr.market.identifier)
 								? 0
-								: curr.converted_volume.usd ?? 0),
+								: (curr.converted_volume.usd ?? 0)),
 					0
 				) ?? null
 		},
@@ -1151,10 +1153,10 @@ const governanceApis = (governanceID) =>
 			gid.startsWith('snapshot:')
 				? `${PROTOCOL_GOVERNANCE_SNAPSHOT_API}/${gid.split('snapshot:')[1].replace(/(:|' |')/g, '/')}.json`
 				: gid.startsWith('compound:')
-				? `${PROTOCOL_GOVERNANCE_COMPOUND_API}/${gid.split('compound:')[1].replace(/(:|' |')/g, '/')}.json`
-				: gid.startsWith('tally:')
-				? `${PROTOCOL_GOVERNANCE_TALLY_API}/${gid.split('tally:')[1].replace(/(:|' |')/g, '/')}.json`
-				: `${PROTOCOL_GOVERNANCE_TALLY_API}/${gid.replace(/(:|' |')/g, '/')}.json`
+					? `${PROTOCOL_GOVERNANCE_COMPOUND_API}/${gid.split('compound:')[1].replace(/(:|' |')/g, '/')}.json`
+					: gid.startsWith('tally:')
+						? `${PROTOCOL_GOVERNANCE_TALLY_API}/${gid.split('tally:')[1].replace(/(:|' |')/g, '/')}.json`
+						: `${PROTOCOL_GOVERNANCE_TALLY_API}/${gid.replace(/(:|' |')/g, '/')}.json`
 		) ?? []
 	).map((g) => g.toLowerCase())
 

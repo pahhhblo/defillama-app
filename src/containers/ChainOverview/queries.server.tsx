@@ -10,7 +10,7 @@ import {
 	RAISES_API,
 	REV_PROTOCOLS
 } from '~/constants'
-import { DEFI_SETTINGS_KEYS } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import {
 	getAdapterChainOverview,
 	getAdapterProtocolSummary,
@@ -174,7 +174,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						.then((data) => {
 							return {
 								netInflows: data?.chainVolumeData?.length
-									? data.chainVolumeData[data.chainVolumeData.length - 1]['Deposits'] ?? null
+									? (data.chainVolumeData[data.chainVolumeData.length - 1]['Deposits'] ?? null)
 									: null
 							}
 						})
@@ -207,7 +207,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 								'x-cg-pro-api-key': process.env.CG_KEY
 							}
 						}
-				  )
+					)
 						.then((res) => res.json())
 						.catch(() => ({}))
 				: Promise.resolve({}),
@@ -224,10 +224,10 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						excludeTotalDataChart: true,
 						excludeTotalDataChartBreakdown: true,
 						dataType: 'dailyAppRevenue'
-				  }).catch((err) => {
+					}).catch((err) => {
 						console.log(err)
 						return null
-				  })
+					})
 				: Promise.resolve(null),
 			metadata.fees && chain !== 'All'
 				? getAdapterChainOverview({
@@ -236,10 +236,10 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						excludeTotalDataChart: true,
 						excludeTotalDataChartBreakdown: true,
 						dataType: 'dailyAppFees'
-				  }).catch((err) => {
+					}).catch((err) => {
 						console.log(err)
 						return null
-				  })
+					})
 				: Promise.resolve(null),
 			metadata.chainFees
 				? getAdapterProtocolSummary({
@@ -247,10 +247,10 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						protocol: metadata.name,
 						excludeTotalDataChart: true,
 						excludeTotalDataChartBreakdown: true
-				  }).catch((err) => {
+					}).catch((err) => {
 						console.log(err)
 						return null
-				  })
+					})
 				: Promise.resolve(null),
 			metadata.chainFees
 				? getAdapterProtocolSummary({
@@ -259,10 +259,10 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						excludeTotalDataChart: true,
 						excludeTotalDataChartBreakdown: true,
 						dataType: 'dailyRevenue'
-				  }).catch((err) => {
+					}).catch((err) => {
 						console.log(err)
 						return null
-				  })
+					})
 				: Promise.resolve(null),
 			metadata.derivatives
 				? getAdapterChainOverview({
@@ -270,10 +270,10 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						chain: metadata.name,
 						excludeTotalDataChart: true,
 						excludeTotalDataChartBreakdown: true
-				  }).catch((err) => {
+					}).catch((err) => {
 						console.log(err)
 						return null
-				  })
+					})
 				: Promise.resolve(null),
 			getCexVolume(),
 			chain === 'All'
@@ -299,7 +299,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						headers: {
 							'x-cg-pro-api-key': process.env.CG_KEY
 						}
-				  })
+					})
 						.then((res) => res.json())
 						.then((data) => data?.market_cap_chart?.market_cap?.slice(0, 14) ?? null)
 						.catch(() => null)
@@ -423,22 +423,28 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 		const uniqueUnlockTokens = new Set<string>()
 		let total14dUnlocks = 0
 		const unlocksChart =
-			upcomingUnlocks?.reduce((acc, protocol) => {
-				if (protocol.tPrice && protocol.events) {
-					for (const event of protocol.events) {
-						if (+event.timestamp * 1e3 > Date.now() && +event.timestamp * 1e3 < Date.now() + 14 * 24 * 60 * 60 * 1000) {
-							const date = new Date(event.timestamp * 1000)
-							const utcTimestamp = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
-							const totalTokens = event.noOfTokens.reduce((sum, amount) => sum + amount, 0)
-							const valueUSD = Number((Number(totalTokens.toFixed(2)) * protocol.tPrice).toFixed(2))
-							acc[utcTimestamp] = { ...(acc[utcTimestamp] || {}), [protocol.tSymbol]: valueUSD }
-							uniqueUnlockTokens.add(protocol.tSymbol)
-							total14dUnlocks += valueUSD
+			upcomingUnlocks?.reduce(
+				(acc, protocol) => {
+					if (protocol.tPrice && protocol.events) {
+						for (const event of protocol.events) {
+							if (
+								+event.timestamp * 1e3 > Date.now() &&
+								+event.timestamp * 1e3 < Date.now() + 14 * 24 * 60 * 60 * 1000
+							) {
+								const date = new Date(event.timestamp * 1000)
+								const utcTimestamp = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+								const totalTokens = event.noOfTokens.reduce((sum, amount) => sum + amount, 0)
+								const valueUSD = Number((Number(totalTokens.toFixed(2)) * protocol.tPrice).toFixed(2))
+								acc[utcTimestamp] = { ...(acc[utcTimestamp] || {}), [protocol.tSymbol]: valueUSD }
+								uniqueUnlockTokens.add(protocol.tSymbol)
+								total14dUnlocks += valueUSD
+							}
 						}
 					}
-				}
-				return acc
-			}, {} as Record<string, Record<string, number>>) ?? {}
+					return acc
+				},
+				{} as Record<string, Record<string, number>>
+			) ?? {}
 		const finalUnlocksChart = Object.entries(unlocksChart).map(([date, tokens]) => {
 			const topTokens = Object.entries(tokens).sort((a, b) => b[1] - a[1]) as Array<[string, number]>
 			const others = topTokens.slice(10).reduce((acc, curr) => (acc += curr[1]), 0)
@@ -456,7 +462,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 							acc += curr.total24h || 0
 						}
 						return acc
-				  }, 0) ?? 0) + (chainFees?.total24h ?? 0)
+					}, 0) ?? 0) + (chainFees?.total24h ?? 0)
 				: null
 
 		const uniqUnlockTokenColors = getNDistinctColors(uniqueUnlockTokens.size)
@@ -529,7 +535,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 							current_price: cgData?.market_data?.current_price?.usd ?? null,
 							market_cap: cgData?.market_data?.market_cap?.usd ?? null,
 							fully_diluted_valuation: cgData?.market_data?.fully_diluted_valuation?.usd ?? null
-					  }
+						}
 					: null,
 			stablecoins,
 			chainFees: {
@@ -573,7 +579,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 								globalMcapChartData[globalMcapChartData.length - 1][1],
 								globalMcapChartData[globalMcapChartData.length - 7][1]
 							)?.toFixed(2)
-					  }
+						}
 					: null,
 			rwaTvlChartData,
 			allChains: [{ label: 'All', to: '/' }].concat(chains.map((c) => ({ label: c, to: `/chain/${slug(c)}` }))),
@@ -584,7 +590,7 @@ export async function getChainOverviewData({ chain }: { chain: string }): Promis
 						tokens: Array.from(uniqueUnlockTokens).map(
 							(x, index) => [x, uniqUnlockTokenColors[index]] as [string, string]
 						)
-				  }
+					}
 				: null,
 			chainIncentives: chainIncentives ?? {
 				emissions24h: null,
@@ -616,10 +622,10 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 					chain: metadata.name,
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: false
-			  }).catch((err) => {
+				}).catch((err) => {
 					console.log(err)
 					return null
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.fees
 			? getAdapterChainOverview({
@@ -628,10 +634,10 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 					excludeTotalDataChart: true,
 					excludeTotalDataChartBreakdown: true,
 					dataType: 'dailyRevenue'
-			  }).catch((err) => {
+				}).catch((err) => {
 					console.log(err)
 					return null
-			  })
+				})
 			: Promise.resolve(null),
 		metadata.dexs
 			? getAdapterChainOverview({
@@ -639,10 +645,10 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 					chain: metadata.name,
 					excludeTotalDataChart: false,
 					excludeTotalDataChartBreakdown: true
-			  }).catch((err) => {
+				}).catch((err) => {
 					console.log(err)
 					return null
-			  })
+				})
 			: Promise.resolve(null),
 		fetchWithErrorLogging(`https://api.llama.fi/emissionsBreakdownAggregated`)
 			.then((res) => res.json())
@@ -762,12 +768,12 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 						change1d: getPercentChange(tvls.default.tvl, tvls.default.tvlPrevDay),
 						change7d: getPercentChange(tvls.default.tvl, tvls.default.tvlPrevWeek),
 						change1m: getPercentChange(tvls.default.tvl, tvls.default.tvlPrevMonth)
-				  }
+					}
 				: null
 
 			for (const chainKey in protocol.chainTvls ?? {}) {
 				if (chain === 'All') {
-					if (DEFI_SETTINGS_KEYS.includes(chainKey as any) || chainKey === 'excludeParent') {
+					if (DEFI_SETTINGS_LOOKUP[chainKey] || chainKey === 'excludeParent') {
 						tvls[chainKey] = {
 							tvl: protocol?.chainTvls?.[chainKey]?.tvl ?? null,
 							tvlPrevDay: protocol?.chainTvls?.[chainKey]?.tvlPrevDay ?? null,
@@ -798,8 +804,8 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 				mcap: protocol.mcap ?? null,
 				mcaptvl: protocol.mcap && tvls?.default?.tvl ? +(protocol.mcap / tvls.default.tvl).toFixed(2) : null,
 				strikeTvl: toStrikeTvl(protocol, {
-					liquidstaking: tvls?.liquidstaking ? true : false,
-					doublecounted: tvls?.doublecounted ? true : false
+					liquidstaking: tvls?.LIQUID_STAKING ? true : false,
+					doublecounted: tvls?.DOUBLE_COUNT ? true : false
 				})
 			}
 
@@ -851,26 +857,32 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 	for (const parentProtocol of parentProtocols) {
 		if (parentStore[parentProtocol.id]) {
 			const parentTvl = parentStore[parentProtocol.id].some((child) => child.tvl !== null)
-				? parentStore[parentProtocol.id].reduce((acc, curr) => {
-						for (const key1 in curr.tvl ?? {}) {
-							if (!acc[key1]) {
-								acc[key1] = {}
+				? parentStore[parentProtocol.id].reduce(
+						(acc, curr) => {
+							for (const key1 in curr.tvl ?? {}) {
+								if (!acc[key1]) {
+									acc[key1] = {}
+								}
+								for (const key2 in curr.tvl[key1]) {
+									acc[key1][key2] = (acc[key1][key2] ?? 0) + curr.tvl[key1][key2]
+								}
 							}
-							for (const key2 in curr.tvl[key1]) {
-								acc[key1][key2] = (acc[key1][key2] ?? 0) + curr.tvl[key1][key2]
-							}
-						}
-						return acc
-				  }, {} as IChildProtocol['tvl'])
+							return acc
+						},
+						{} as IChildProtocol['tvl']
+					)
 				: null
 
 			const parentFees = parentStore[parentProtocol.id].some((child) => child.fees !== null)
-				? parentStore[parentProtocol.id].reduce((acc, curr) => {
-						for (const key1 in curr.fees ?? {}) {
-							acc[key1] = (acc[key1] ?? 0) + curr.fees[key1]
-						}
-						return acc
-				  }, {} as IChildProtocol['fees'])
+				? parentStore[parentProtocol.id].reduce(
+						(acc, curr) => {
+							for (const key1 in curr.fees ?? {}) {
+								acc[key1] = (acc[key1] ?? 0) + curr.fees[key1]
+							}
+							return acc
+						},
+						{} as IChildProtocol['fees']
+					)
 				: null
 
 			if (parentFees) {
@@ -878,12 +890,15 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 			}
 
 			const parentRevenue = parentStore[parentProtocol.id].some((child) => child.revenue !== null)
-				? parentStore[parentProtocol.id].reduce((acc, curr) => {
-						for (const key1 in curr.revenue ?? {}) {
-							acc[key1] = (acc[key1] ?? 0) + curr.revenue[key1]
-						}
-						return acc
-				  }, {} as IChildProtocol['revenue'])
+				? parentStore[parentProtocol.id].reduce(
+						(acc, curr) => {
+							for (const key1 in curr.revenue ?? {}) {
+								acc[key1] = (acc[key1] ?? 0) + curr.revenue[key1]
+							}
+							return acc
+						},
+						{} as IChildProtocol['revenue']
+					)
 				: null
 
 			if (parentRevenue) {
@@ -891,21 +906,27 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 			}
 
 			const parentDexs = parentStore[parentProtocol.id].some((child) => child.dexs !== null)
-				? parentStore[parentProtocol.id].reduce((acc, curr) => {
-						for (const key1 in curr.dexs ?? {}) {
-							acc[key1] = (acc[key1] ?? 0) + curr.dexs[key1]
-						}
-						return acc
-				  }, {} as IChildProtocol['dexs'])
+				? parentStore[parentProtocol.id].reduce(
+						(acc, curr) => {
+							for (const key1 in curr.dexs ?? {}) {
+								acc[key1] = (acc[key1] ?? 0) + curr.dexs[key1]
+							}
+							return acc
+						},
+						{} as IChildProtocol['dexs']
+					)
 				: null
 
 			let parentEmissions = parentStore[parentProtocol.id].some((child) => child.emissions !== null)
-				? parentStore[parentProtocol.id].reduce((acc, curr) => {
-						for (const key1 in curr.emissions ?? {}) {
-							acc[key1] = (acc[key1] ?? 0) + curr.emissions[key1]
-						}
-						return acc
-				  }, {} as IChildProtocol['emissions'])
+				? parentStore[parentProtocol.id].reduce(
+						(acc, curr) => {
+							for (const key1 in curr.emissions ?? {}) {
+								acc[key1] = (acc[key1] ?? 0) + curr.emissions[key1]
+							}
+							return acc
+						},
+						{} as IChildProtocol['emissions']
+					)
 				: null
 
 			if (!parentEmissions) {
@@ -934,7 +955,7 @@ export const getProtocolsByChain = async ({ metadata, chain }: { chain: string; 
 						change1d: getPercentChange(parentTvl.default.tvl, parentTvl.default.tvlPrevDay),
 						change7d: getPercentChange(parentTvl.default.tvl, parentTvl.default.tvlPrevWeek),
 						change1m: getPercentChange(parentTvl.default.tvl, parentTvl.default.tvlPrevMonth)
-				  }
+					}
 				: null
 
 			protocolsStore[parentProtocol.id] = {

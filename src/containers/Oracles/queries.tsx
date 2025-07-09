@@ -1,7 +1,7 @@
 import { formatProtocolsData } from '~/api/categories/protocols/utils'
 import { ILiteParentProtocol, ILiteProtocol } from '~/containers/ChainOverview/types'
 import { ORACLE_API, PROTOCOLS_API } from '~/constants'
-import { DEFI_SETTINGS_KEYS } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { getAdapterChainOverview, IAdapterOverview } from '~/containers/DimensionAdapters/queries'
 import { getColorFromNumber, slug } from '~/utils'
 import { fetchWithErrorLogging } from '~/utils/async'
@@ -132,7 +132,7 @@ export async function getOraclePageData(oracle = null, chain = null) {
 		const latestTvlByChain: Record<string, number> = {}
 		for (const oracle in latestOracleTvlByChain) {
 			for (const ochain in latestOracleTvlByChain[oracle]) {
-				if (!ochain.includes('-') && !DEFI_SETTINGS_KEYS.includes(ochain)) {
+				if (!ochain.includes('-') && !DEFI_SETTINGS_LOOKUP[ochain]) {
 					latestTvlByChain[ochain] = (latestTvlByChain[ochain] ?? 0) + latestOracleTvlByChain[oracle][ochain]
 				}
 			}
@@ -145,7 +145,7 @@ export async function getOraclePageData(oracle = null, chain = null) {
 		let oracleLinks = oracle
 			? [{ label: 'All', to: `/oracles/${oracle}` }].concat(
 					chainsByOracle[oracle].map((c: string) => ({ label: c, to: `/oracles/${oracle}/${c}` }))
-			  )
+				)
 			: [{ label: 'All', to: `/oracles` }].concat(uniqueChains.map((c) => ({ label: c, to: `/oracles/chain/${c}` })))
 
 		const colors = {}
@@ -263,7 +263,7 @@ export async function getOraclePageDataByChain(chain: string) {
 		const latestTvlByChain: Record<string, number> = {}
 		for (const oracle in latestOracleTvlByChain) {
 			for (const ochain in latestOracleTvlByChain[oracle]) {
-				if (!ochain.includes('-') && !DEFI_SETTINGS_KEYS.includes(ochain)) {
+				if (!ochain.includes('-') && !DEFI_SETTINGS_LOOKUP[ochain]) {
 					latestTvlByChain[ochain] = (latestTvlByChain[ochain] ?? 0) + latestOracleTvlByChain[oracle][ochain]
 				}
 			}

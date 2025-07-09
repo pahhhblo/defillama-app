@@ -11,7 +11,7 @@ import ProtocolChart from './Chart/ProtocolChart'
 import { QuestionHelper } from '~/components/QuestionHelper'
 import type { IBarChartProps, IChartProps, IPieChartProps } from '~/components/ECharts/types'
 import { extraTvlOptionsHelperTexts, tvlOptions } from '~/components/Filters/options'
-import { DEFI_SETTINGS_KEYS, FEES_SETTINGS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS_LOOKUP, FEES_SETTINGS_LOOKUP, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { capitalizeFirstLetter, formatPercentage, formattedNum, getBlockExplorer, slug, tokenIconUrl } from '~/utils'
 import { useFetchProtocolTwitter, useGetTokenPrice } from '~/api/categories/protocols/client'
 import type { IFusedProtocolData, IProtocolDevActivity, NftVolumeData } from '~/api/types'
@@ -302,7 +302,7 @@ const ProtocolContainer = ({
 				if (name === 'masterchef' || name === 'offers') return acc
 
 				// check if tvl name is addl tvl type and is toggled
-				if (isLowerCase(name[0]) && DEFI_SETTINGS_KEYS.includes(name)) {
+				if (isLowerCase(name[0]) && DEFI_SETTINGS_LOOKUP[name]) {
 					acc.extraTvls.push([name, tvl])
 					acc.finalTvlOptions.push(tvlOptions.find((e) => e.key === name))
 				} else {
@@ -332,10 +332,10 @@ const ProtocolContainer = ({
 		const feesToggle = []
 
 		if (dailyBribesRevenue != null) {
-			feesToggle.push(feesOptions.find((f) => f.key === FEES_SETTINGS.BRIBES))
+			feesToggle.push(feesOptions.find((f) => f.key === FEES_SETTINGS_LOOKUP.BRIBES.toLowerCase()))
 		}
 		if (dailyTokenTaxes != null) {
-			feesToggle.push(feesOptions.find((f) => f.key === FEES_SETTINGS.TOKENTAX))
+			feesToggle.push(feesOptions.find((f) => f.key === FEES_SETTINGS_LOOKUP.TOKENTAX.toLowerCase()))
 		}
 
 		const tvls = Object.entries(tvlsByChain)
@@ -365,14 +365,14 @@ const ProtocolContainer = ({
 
 	const stakedAmount =
 		historicalChainTvls?.['staking']?.tvl?.length > 0
-			? historicalChainTvls?.['staking']?.tvl[historicalChainTvls?.['staking']?.tvl.length - 1]?.totalLiquidityUSD ??
-			  null
+			? (historicalChainTvls?.['staking']?.tvl[historicalChainTvls?.['staking']?.tvl.length - 1]?.totalLiquidityUSD ??
+				null)
 			: null
 
 	const borrowedAmount =
 		historicalChainTvls?.['borrowed']?.tvl?.length > 0
-			? historicalChainTvls?.['borrowed']?.tvl[historicalChainTvls?.['borrowed']?.tvl.length - 1]?.totalLiquidityUSD ??
-			  null
+			? (historicalChainTvls?.['borrowed']?.tvl[historicalChainTvls?.['borrowed']?.tvl.length - 1]?.totalLiquidityUSD ??
+				null)
 			: null
 
 	const { data: chainPrice, isLoading: fetchingChainPrice } = useGetTokenPrice(chartDenominations?.[1]?.geckoId)
@@ -399,7 +399,7 @@ const ProtocolContainer = ({
 	let holdersRevenue30dFinal = holdersRevenue30d
 	let allTimeHoldersRevenueFinal = allTimeHoldersRevenue
 
-	if (extraTvlsEnabled[FEES_SETTINGS.BRIBES] && dailyBribesRevenue != null) {
+	if (extraTvlsEnabled[FEES_SETTINGS_LOOKUP.BRIBES.toLowerCase()] && dailyBribesRevenue != null) {
 		dailyFeesFinal = dailyFees + (dailyBribesRevenue ?? 0)
 		fees30dFinal = fees30d + (bribesRevenue30d ?? 0)
 		allTimeFeesFinal = allTimeFees + (allTimeBribesRevenue ?? 0)
@@ -412,7 +412,7 @@ const ProtocolContainer = ({
 		holdersRevenue30dFinal = holdersRevenue30d + (bribesRevenue30d ?? 0)
 		allTimeHoldersRevenueFinal = allTimeHoldersRevenue + (allTimeBribesRevenue ?? 0)
 	}
-	if (extraTvlsEnabled[FEES_SETTINGS.TOKENTAX] && dailyTokenTaxes != null) {
+	if (extraTvlsEnabled[FEES_SETTINGS_LOOKUP.TOKENTAX.toLowerCase()] && dailyTokenTaxes != null) {
 		dailyFeesFinal = dailyFees + (dailyTokenTaxes ?? 0)
 		fees30dFinal = fees30d + (tokenTaxesRevenue30d ?? 0)
 		allTimeFeesFinal = allTimeFees + (allTimeTokenTaxesRevenue ?? 0)
@@ -1686,7 +1686,7 @@ const ProtocolContainer = ({
 													<span>{stablecoin.split('$')[0]}</span>
 													<Icon name="arrow-up-right" height={12} width={12} />
 												</a>
-										  ))
+											))
 										: null}
 								</div>
 							</div>

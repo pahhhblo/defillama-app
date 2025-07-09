@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { LocalLoader } from '~/components/LocalLoader'
 import { chainCoingeckoIdsForGasNotMcap } from '~/constants/chainTokens'
 import { useFetchChainChartData } from '~/containers/ChainOverview/useFetchChainChartData'
-import { DEFI_SETTINGS } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { useIsClient } from '~/hooks'
 import { withPerformanceLogging } from '~/utils/perf'
 import metadata from '~/utils/metadata'
@@ -66,8 +66,8 @@ export default function ChainChartPage(props) {
 
 		const tvlSettings = {}
 
-		for (const setting in DEFI_SETTINGS) {
-			tvlSettings[DEFI_SETTINGS[setting]] = queryParams[`include_${DEFI_SETTINGS[setting]}_in_tvl`]
+		for (const setting in DEFI_SETTINGS_LOOKUP) {
+			tvlSettings[DEFI_SETTINGS_LOOKUP[setting]] = queryParams[`include_${DEFI_SETTINGS_LOOKUP[setting]}_in_tvl`]
 		}
 
 		const toggledCharts = props.charts.filter((tchart) =>

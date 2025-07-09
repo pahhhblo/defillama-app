@@ -12,7 +12,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '~/components/Icon'
 import { CATEGORY_API, PROTOCOLS_API } from '~/constants'
 import { fetchWithErrorLogging } from '~/utils/async'
-import { DEFI_SETTINGS_KEYS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { SelectWithCombobox } from '~/components/SelectWithCombobox'
 import { tvlOptions } from '~/components/Filters/options'
 
@@ -50,7 +50,7 @@ export const getStaticProps = withPerformanceLogging('categories', async () => {
 
 		const extraTvls = {}
 
-		for (const extra of DEFI_SETTINGS_KEYS) {
+		for (const extra of DEFI_SETTINGS) {
 			if (!['doublecounted', 'liquidstaking'].includes(extra) && p.chainTvls[extra]) {
 				extraTvls[extra] = p.chainTvls[extra]
 			}
@@ -66,7 +66,7 @@ export const getStaticProps = withPerformanceLogging('categories', async () => {
 				tvlPrevMonth: 0,
 				revenue: 0,
 				extraTvls: Object.fromEntries(
-					DEFI_SETTINGS_KEYS.map((key) => [key, { tvl: 0, tvlPrevDay: 0, tvlPrevWeek: 0, tvlPrevMonth: 0 }])
+					DEFI_SETTINGS.map((key) => [key, { tvl: 0, tvlPrevDay: 0, tvlPrevWeek: 0, tvlPrevMonth: 0 }])
 				)
 			}
 		}
@@ -87,7 +87,7 @@ export const getStaticProps = withPerformanceLogging('categories', async () => {
 						tvlPrevMonth: 0,
 						revenue: 0,
 						extraTvls: Object.fromEntries(
-							DEFI_SETTINGS_KEYS.map((key) => [key, { tvl: 0, tvlPrevDay: 0, tvlPrevWeek: 0, tvlPrevMonth: 0 }])
+							DEFI_SETTINGS.map((key) => [key, { tvl: 0, tvlPrevDay: 0, tvlPrevWeek: 0, tvlPrevMonth: 0 }])
 						)
 					}
 				}
@@ -169,7 +169,7 @@ export const getStaticProps = withPerformanceLogging('categories', async () => {
 				}
 			}
 			chartData[cat].data.push([+date * 1e3, chart[date]?.[cat]?.tvl ?? null])
-			for (const extra of DEFI_SETTINGS_KEYS) {
+			for (const extra of DEFI_SETTINGS) {
 				if (['doublecounted', 'liquidstaking'].includes(extra)) {
 					continue
 				}

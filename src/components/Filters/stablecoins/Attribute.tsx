@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router'
-import { STABLECOINS_SETTINGS } from '~/contexts/LocalStorage'
+import { STABLECOINS_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { useMemo } from 'react'
 import { Select } from '~/components/Select'
 
-const { DEPEGGED } = STABLECOINS_SETTINGS
+const { DEPEGGED } = STABLECOINS_SETTINGS_LOOKUP
 
 export const stablecoinAttributeOptions = [
 	{

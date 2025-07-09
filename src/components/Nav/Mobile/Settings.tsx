@@ -1,4 +1,4 @@
-import { DARK_MODE, TSETTINGTYPE, useDarkModeManager, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { DARK_MODE, T_SETTINGS, useDarkModeManager, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { tvlOptions } from '~/components/Filters/options'
 import { nftOptions } from '~/components/Filters/nfts/options'
 import { useRouter } from 'next/router'
@@ -66,7 +66,7 @@ export function Settings() {
 
 const useAppSettings = (): {
 	options: Array<{ name: string; key: string; help?: string }>
-	dashboardType: TSETTINGTYPE
+	dashboardType: T_SETTINGS
 } => {
 	const router = useRouter()
 

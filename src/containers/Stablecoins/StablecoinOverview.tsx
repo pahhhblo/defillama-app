@@ -8,7 +8,7 @@ import { AuditInfo } from '~/components/AuditInfo'
 import { SEO } from '~/components/SEO'
 import { QuestionHelper } from '~/components/QuestionHelper'
 import { useCalcGroupExtraPeggedByDay, useCalcCirculating, useGroupBridgeData } from '~/hooks/data/stablecoins'
-import { UNRELEASED, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { STABLECOINS_SETTINGS_LOOKUP, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import {
 	capitalizeFirstLetter,
 	toNiceCsvDate,
@@ -118,7 +118,7 @@ export const PeggedAssetInfo = ({
 		[chainsData, chainsUnique, totalChartTooltipLabel]
 	)
 
-	const extraPeggeds = [UNRELEASED]
+	const extraPeggeds = [STABLECOINS_SETTINGS_LOOKUP.UNRELEASED.toLowerCase()]
 	const [extraPeggedsEnabled, updater] = useLocalStorageSettingsManager('stablecoins')
 
 	const chainTotals = useCalcCirculating(chainCirculatings)

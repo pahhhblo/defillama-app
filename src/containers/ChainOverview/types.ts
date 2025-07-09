@@ -122,7 +122,7 @@ export interface ILiteProtocol {
 	tvlPrevWeek: number
 	tvlPrevMonth: number
 	chainTvls: Record<
-		typeof DEFI_SETTINGS[keyof typeof DEFI_SETTINGS],
+		DEFI_SETTINGS,
 		{
 			tvl: number
 			tvlPrevDay: number
@@ -158,7 +158,7 @@ export interface ILiteParentProtocol {
 	mcap: number
 }
 
-export type TVL_TYPES = typeof DEFI_SETTINGS[keyof typeof DEFI_SETTINGS] | 'default' | 'excludeParent'
+export type TVL_TYPES = DEFI_SETTINGS | 'default' | 'excludeParent'
 
 export interface IChildProtocol {
 	name: string

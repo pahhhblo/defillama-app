@@ -5,7 +5,7 @@ import { formattedNum, slug, tokenIconUrl, firstDayOfQuarter } from '~/utils'
 import { Suspense, useMemo, useState } from 'react'
 import { TokenLogo } from '~/components/TokenLogo'
 import { Bookmark } from '~/components/Bookmark'
-import { FEES_SETTINGS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { FEES_SETTINGS_LOOKUP, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { Flag } from './Flag'
 import { Icon } from '~/components/Icon'
 import { Tooltip } from '~/components/Tooltip'
@@ -51,11 +51,11 @@ export const ProtocolOverview = (props: IProtocolOverviewPageData) => {
 		}
 
 		if (props.bribeRevenue?.totalAllTime != null) {
-			toggleOptions.push(feesOptions.find((f) => f.key === FEES_SETTINGS.BRIBES))
+			toggleOptions.push(feesOptions.find((f) => f.key === FEES_SETTINGS_LOOKUP.BRIBES))
 		}
 
 		if (props.tokenTax?.totalAllTime != null) {
-			toggleOptions.push(feesOptions.find((f) => f.key === FEES_SETTINGS.TOKENTAX))
+			toggleOptions.push(feesOptions.find((f) => f.key === FEES_SETTINGS_LOOKUP.TOKENTAX))
 		}
 
 		return {
@@ -1570,7 +1570,7 @@ const ProtocolInfo = (props: IProtocolOverviewPageData) => {
 								<Icon name="github" className="w-3 h-3" />
 								<span>{props.github.length === 1 ? 'GitHub' : github}</span>
 							</a>
-					  ))
+						))
 					: null}
 				{props.twitter ? (
 					<a
@@ -1991,7 +1991,7 @@ const Competitors = (props: IProtocolOverviewPageData) => {
 const incomeStatementGroupByOptions = ['Yearly', 'Quarterly', 'Monthly'] as const
 
 const IncomeStatement = (props: IProtocolOverviewPageData) => {
-	const [groupBy, setGroupBy] = useState<typeof incomeStatementGroupByOptions[number]>('Quarterly')
+	const [groupBy, setGroupBy] = useState<(typeof incomeStatementGroupByOptions)[number]>('Quarterly')
 	const { monthDates, feesByMonth, revenueByMonth, incentivesByMonth } = useMemo(() => {
 		if (groupBy === 'Quarterly') {
 			const quarterlyDates = new Set<number>()

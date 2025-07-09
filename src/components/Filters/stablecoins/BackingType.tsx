@@ -1,24 +1,24 @@
 import { useRouter } from 'next/router'
-import { STABLECOINS_SETTINGS } from '~/contexts/LocalStorage'
+import { STABLECOINS_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { useMemo } from 'react'
 import { Select } from '~/components/Select'
 
 export const stablecoinBackingOptions = [
 	{
 		name: 'Fiat',
-		key: STABLECOINS_SETTINGS.FIATSTABLES,
+		key: STABLECOINS_SETTINGS_LOOKUP.FIATSTABLES,
 		filterFn: (item) => item.pegMechanism === 'fiat-backed',
 		help: 'Show stablecoins backed by fiat'
 	},
 	{
 		name: 'Crypto',
-		key: STABLECOINS_SETTINGS.CRYPTOSTABLES,
+		key: STABLECOINS_SETTINGS_LOOKUP.CRYPTOSTABLES,
 		filterFn: (item) => item.pegMechanism === 'crypto-backed',
 		help: 'Show stablecoins backed by crypto'
 	},
 	{
 		name: 'Algorithmic',
-		key: STABLECOINS_SETTINGS.ALGOSTABLES,
+		key: STABLECOINS_SETTINGS_LOOKUP.ALGOSTABLES,
 		filterFn: (item) => item.pegMechanism === 'algorithmic',
 		help: 'Show algorithmic stablecoins'
 	}

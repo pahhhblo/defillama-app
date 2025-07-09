@@ -9,12 +9,12 @@ import { YieldProjects } from './Projects'
 import { APYRange } from './APYRange'
 import { ResetAllYieldFilters } from './ResetAll'
 import type { IDropdownMenusProps } from './types'
-import { YIELDS_SETTINGS } from '~/contexts/LocalStorage'
+import { YIELDS_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { ColumnFilters } from './ColumnFilters'
 import { CSVDownloadButton } from '~/components/ButtonStyled/CsvButton'
 import { Switch } from '~/components/Switch'
 
-const BAD_DEBT_KEY = YIELDS_SETTINGS.NO_BAD_DEBT.toLowerCase()
+const BAD_DEBT_KEY = YIELDS_SETTINGS_LOOKUP.NO_BAD_DEBT.toLowerCase()
 
 export function YieldFilterDropdowns({
 	pathname,

@@ -1,7 +1,7 @@
 import { CATEGORY_API, CHART_API, PROTOCOLS_API } from '~/constants'
 import { fetchWithErrorLogging } from '~/utils/async'
 import { getAdapterChainOverview, IAdapterOverview } from '../DimensionAdapters/queries'
-import { DEFI_SETTINGS_KEYS } from '~/contexts/LocalStorage'
+import { DEFI_SETTINGS, DEFI_SETTINGS_LOOKUP } from '~/contexts/LocalStorage'
 import { ILiteParentProtocol, ILiteProtocol } from '../ChainOverview/types'
 import { IProtocolByCategoryPageData } from './types'
 import { slug, tokenIconUrl } from '~/utils'
@@ -140,14 +140,11 @@ export async function getProtocolsByCategory({
 
 					const extraKey = pchain.split('-')[1]
 
-					if (
-						extraKey &&
-						(!DEFI_SETTINGS_KEYS.includes(extraKey) || !['doublecounted', 'liquidstaking'].includes(extraKey))
-					) {
+					if (extraKey && (!DEFI_SETTINGS_LOOKUP[extraKey] || !['doublecounted', 'liquidstaking'].includes(extraKey))) {
 						continue
 					}
 
-					if (DEFI_SETTINGS_KEYS.includes(extraKey)) {
+					if (DEFI_SETTINGS_LOOKUP[extraKey]) {
 						extraTvls[extraKey] = (extraTvls[extraKey] ?? 0) + (protocol.chainTvls[pchain].tvl ?? 0)
 						continue
 					}
@@ -165,7 +162,7 @@ export async function getProtocolsByCategory({
 						continue
 					}
 
-					if (DEFI_SETTINGS_KEYS.includes(pchain)) {
+					if (DEFI_SETTINGS_LOOKUP[pchain]) {
 						extraTvls[pchain] = (extraTvls[pchain] ?? 0) + (protocol.chainTvls[pchain].tvl ?? 0)
 						continue
 					}

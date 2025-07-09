@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars*/
 import * as React from 'react'
-import { LIQS_SETTINGS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { LIQS_SETTINGS_LOOKUP, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { Icon } from '~/components/Icon'
 
 export const TableSwitch = () => {
 	const [liqsSettings, toggleLiqsSettings] = useLocalStorageSettingsManager('liquidations')
-	const { LIQS_SHOWING_INSPECTOR } = LIQS_SETTINGS
+	const { LIQS_SHOWING_INSPECTOR } = LIQS_SETTINGS_LOOKUP
 	const isLiqsShowingInspector = liqsSettings[LIQS_SHOWING_INSPECTOR]
 
 	return (

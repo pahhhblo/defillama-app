@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { BRIDGES_SHOWING_TXS, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
+import { BRIDGES_SETTINGS_LOOKUP, useLocalStorageSettingsManager } from '~/contexts/LocalStorage'
 import { RowLinksWithDropdown } from '~/components/RowLinksWithDropdown'
 import type { IBarChartProps, IPieChartProps } from '~/components/ECharts/types'
 import { BridgesSearchWithBreakdown } from '~/components/Search/Bridges'
@@ -41,7 +41,7 @@ export function BridgesOverviewByChain({
 	}, [])
 
 	const [bridgesSettings] = useLocalStorageSettingsManager('bridges')
-	const isBridgesShowingTxs = bridgesSettings[BRIDGES_SHOWING_TXS]
+	const isBridgesShowingTxs = bridgesSettings[BRIDGES_SETTINGS_LOOKUP.BRIDGES_SHOWING_TXS]
 
 	const handleRouting = (selectedChain) => {
 		if (selectedChain === 'All') return `/bridges`
